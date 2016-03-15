@@ -66,12 +66,7 @@ unsigned long debounce_start = 0;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, PXL_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel onboard = Adafruit_NeoPixel(1, 8, NEO_GRB + NEO_KHZ800);
 
-void setup() {
-#ifndef ESP8266
-  while (!Serial);     // will pause Zero, Leonardo, etc until serial console opens
-#endif
-  Serial.begin(9600);
-  
+void setup() {  
   strip.begin();
   strip.setBrightness(50);
   strip.show(); // Initialize all pixels to 'off'
@@ -421,7 +416,6 @@ void chooseHoliday() {
 void chooseAura() {
   while (adjustment_mode) {
     chosen_aura = chosen_aura == 3 ? 1 : chosen_aura + 1;
-    Serial.println(chosen_aura);
     unsigned long mode_start = millis();
     // Run mode for 500ms at current speed
     while ((mode_start + 2000) > millis()) {
@@ -434,12 +428,10 @@ void chooseAura() {
 void adjustSpeed(){
   boolean reverse = false;
   current_speed = 2;
-  Serial.println("Entering adjust speed mode");
   while (adjustment_mode) {
     if (current_speed == 10 || current_speed == 1){
       reverse = !reverse;
     }
-    Serial.println(current_speed);
     if (reverse) {
       current_speed++;
     } else {
@@ -478,7 +470,6 @@ boolean checkButton() {
         if ((millis() - adj_start) <= MODE_LENGTH) {
           if (leds_on) {
             if (adjustment_mode) {
-              Serial.println("Exiting Adjustment Mode");
               adjustment_mode = false;
             } else {
               current_mode = current_mode > AURA ? 0 : current_mode + 1;
@@ -495,7 +486,6 @@ boolean checkButton() {
         adj_start > 0 && ((millis() - adj_start) > MODE_LENGTH)){
      adj_start = 0;
      adjustment_mode = true;
-     Serial.println("Entering Adjustment Mode");
    }
     
    if (button_state == LOW && 
@@ -508,9 +498,9 @@ boolean checkButton() {
   }
   
   if (button_state == LOW){
-    //onboard.setPixelColor(0, GREEN);
+    onboard.setPixelColor(0, GREEN);
   } else {
-    //onboard.setPixelColor(0, RED);  
+    onboard.setPixelColor(0, RED);  
   }
   onboard.show();
   last_reading = reading;
